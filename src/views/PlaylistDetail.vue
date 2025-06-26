@@ -13,61 +13,87 @@
 
     <!-- Song List with Search -->
     <div class="playlist-songs">
-      <input
-        type="text"
-        placeholder="Search songs..."
-        v-model="searchQuery"
-        class="search-bar"
-      />
-      <div v-if="filteredSongs.length">
-        <div
-          class="song-item"
+      <div class="songs-header">
+        <SearchBar v-model="searchQuery" />
+        <button class="add-song-btn" @click="openAddSongModal">
+          + Add Song
+        </button>
+      </div>
+      
+      <div v-if="loading" class="loading">
+        <LoadingSpinner />
+      </div>
+      
+      <div v-else-if="error" class="error">
+        {{ error }}
+      </div>
+      
+      <div v-else-if="filteredSongs.length">
+        <SongItem
           v-for="song in filteredSongs"
           :key="song.id"
-        >
-          <div class="song-title">{{ song.title }}</div>
-          <div class="song-artist">{{ song.artist }}</div>
-          <div class="song-duration">{{ song.duration }}</div>
-        </div>
+          :song="song"
+          @delete="handleDeleteSong"
+        />
       </div>
+      
       <div v-else class="no-songs">
         No songs found.
       </div>
     </div>
+
+    <!-- Add Song Modal -->
+    <AddSongModal 
+      v-if="showAddSongModal" 
+      :playlistId="playlistId"
+      @save="handleAddSong" 
+      @close="closeAddSongModal"
+    />
   </div>
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex';
+import SongItem from '../components/SongItem.vue';
+import SearchBar from '../components/SearchBar.vue';
+import LoadingSpinner from '../components/LoadingSpinner.vue';
+import AddSongModal from '../components/AddSongModal.vue';
+
 export default {
   name: "PlaylistDetail",
+  components: {
+    SongItem,
+    SearchBar,
+    LoadingSpinner,
+    AddSongModal,
+  },
   data() {
     return {
       searchQuery: "",
-      // For demo purposes, we're using dummy song data.
-      dummySongs: [
-        { id: "s1", title: "Song One", artist: "Artist One", duration: "3:45" },
-        { id: "s2", title: "Song Two", artist: "Artist Two", duration: "4:05" },
-        { id: "s3", title: "Song Three", artist: "Artist Three", duration: "2:50" },
-      ],
+      showAddSongModal: false,
     };
   },
   computed: {
+    ...mapGetters('playlists', ['getPlaylistById']),
+    ...mapGetters('songs', ['getSongsByPlaylistId']),
+    
+    playlistId() {
+      return this.$route.params.id;
+    },
     
     playlist() {
-      const id = this.$route.params.id;
-      return (
-        this.$store.state.playlists.playlists.find((p) => p.id === id) || {
-          name: "Playlist not found",
-          description: "",
-          thumbnail: "",
-          created_at: "",
-        }
-      );
+      return this.getPlaylistById(this.playlistId) || {
+        name: "Playlist not found",
+        description: "",
+        thumbnail: "",
+        created_at: "",
+      };
     },
     
     songs() {
-      return this.dummySongs;
+      return this.getSongsByPlaylistId(this.playlistId);
     },
+    
     filteredSongs() {
       if (!this.searchQuery.trim()) return this.songs;
       const query = this.searchQuery.toLowerCase();
@@ -77,13 +103,52 @@ export default {
           song.artist.toLowerCase().includes(query)
       );
     },
+    
     formattedDate() {
       if (!this.playlist.created_at) return "";
       return new Date(this.playlist.created_at).toLocaleDateString();
     },
-  },
-  created() {
     
+    loading() {
+      return this.$store.state.songs.loading;
+    },
+    
+    error() {
+      return this.$store.state.songs.error;
+    },
+  },
+  
+  methods: {
+    ...mapActions('songs', ['fetchSongsByPlaylist', 'deleteSong', 'createSong']),
+    
+    async handleDeleteSong(songId) {
+      try {
+        await this.deleteSong(songId);
+      } catch (error) {
+        console.error('Error deleting song:', error);
+      }
+    },
+
+    openAddSongModal() {
+      this.showAddSongModal = true;
+    },
+
+    closeAddSongModal() {
+      this.showAddSongModal = false;
+    },
+
+    async handleAddSong(songData) {
+      try {
+        await this.createSong(songData);
+        this.closeAddSongModal();
+      } catch (error) {
+        console.error('Error adding song:', error);
+      }
+    },
+  },
+  
+  async mounted() {
+    await this.fetchSongsByPlaylist(this.playlistId);
   },
 };
 </script>
@@ -137,6 +202,28 @@ export default {
   margin-top: 1.5rem;
 }
 
+.songs-header {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.add-song-btn {
+  background: #007bff;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.add-song-btn:hover {
+  background: #0056b3;
+}
+
 .search-bar {
   width: 100%;
   padding: 0.5rem;
@@ -178,5 +265,25 @@ export default {
   text-align: center;
   color: #777;
   margin-top: 1rem;
+}
+
+.loading, .error {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.error {
+  color: #d32f2f;
+}
+
+@media (max-width: 600px) {
+  .songs-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .add-song-btn {
+    order: -1;
+  }
 }
 </style>

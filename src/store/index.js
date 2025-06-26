@@ -1,14 +1,16 @@
 import { createStore } from "vuex";
 import playlists from "./playlists";
+import songs from './songs';
 
 const THEME_KEY = "app-theme";
 
 export default createStore({
-  state: {
-    theme: localStorage.getItem(THEME_KEY) || "light", // default light
-  },
   modules: {
     playlists,
+    songs,
+  },
+  state: {
+    theme: localStorage.getItem(THEME_KEY) || "light", // default light
   },
   state: {},
   getters: {

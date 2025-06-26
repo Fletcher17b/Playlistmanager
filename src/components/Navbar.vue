@@ -16,7 +16,14 @@ import {mapGetters,mapActions} from "vuex";
 
 export default {
   name: 'Navbar',
+  computed: {
+    ...mapGetters(["isDarkTheme"]),
+    isDark() {
+      return this.isDarkTheme;
+    },
+  },
   methods: {
+    ...mapActions(["toggleTheme"]),
     goHome() {
       this.$router.push('/');
     },
@@ -26,15 +33,6 @@ export default {
     goSettings() {
       this.$router.push('/settings');
     },
-  },
-  computed: {
-    ...mapGetters(["isDarkTheme"]),
-    isDark() {
-      return this.isDarkTheme;
-    },
-  },
-  methods: {
-    ...mapActions(["toggleTheme"]),
   },
 };
 </script>

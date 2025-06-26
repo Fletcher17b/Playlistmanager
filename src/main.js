@@ -8,9 +8,12 @@ import 'bootstrap-vue-3/dist/bootstrap-vue-3.css';
 
 import BootstrapVue3 from 'bootstrap-vue-3';
 
+const app = createApp(App);
 
-createApp(App).use(store).use(router).mount("#app");
+app.use(store);
+app.use(router);
+app.use(BootstrapVue3);
 
+store.dispatch("initializeTheme"); 
 
-store.dispatch("initializeTheme");
-Vue.use(BootstrapVue3)
+app.mount("#app");
