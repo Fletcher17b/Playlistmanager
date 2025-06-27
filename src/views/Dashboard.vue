@@ -1,6 +1,25 @@
+<!--
+  Dashboard.vue
+  Main dashboard view for the Playlist Manager application.
+  
+  Features:
+  - Displays all user playlists in a responsive grid
+  - Allows creating new playlists via modal
+  - Supports editing and deleting existing playlists
+  - Integrates with Vuex store for state management
+  
+  Components used:
+  - Navbar: Navigation component
+  - PlaylistCard: Individual playlist display cards
+  - AddPlaylistModal: Modal for creating/editing playlists
+-->
+
 <template>
+  <!-- Navigation bar at the top -->
   <Navbar></Navbar>
+  
   <div class="dashboard">
+    <!-- Header section with title and create button -->
     <div class="dashboard-header">
       <h1>Your Playlists</h1>
       <button class="add-btn" @click="openCreateModal">+ New Playlist</button>
@@ -21,89 +40,141 @@
         @delete="handleDelete"
       />
     </div>
-    
-    <AddPlaylistModal v-if="showModal" :editingPlaylist="editing"  @save="handleSave" @close="closeModal"/>
 
-
+    <!-- Modal for creating/editing playlists (conditionally rendered) -->
+    <AddPlaylistModal
+      v-if="showModal"
+      :editingPlaylist="editing"
+      @save="handleSave"
+      @close="closeModal"
+    />
   </div>
-
 </template>
 
 <script>
-import { mapGetters,mapActions } from 'vuex';
-import PlaylistCard from '../components/PlaylistCard.vue';
-import Navbar from '../components/Navbar.vue';
-import AddPlaylistModal from '../components/AddPlaylistModal.vue'
+import { mapGetters, mapActions } from "vuex";
+import PlaylistCard from "../components/PlaylistCard.vue";
+import Navbar from "../components/Navbar.vue";
+import AddPlaylistModal from "../components/AddPlaylistModal.vue";
 
 export default {
-  name: 'Dashboard',
+  name: "Dashboard",
+  
+  // Register child components
   components: {
     PlaylistCard,
     Navbar,
     AddPlaylistModal,
   },
+  
+  // Component's local data
   data() {
     return {
-      showModal: false,
-      editing: null, // holds the playlist being edited or null
+      showModal: false, // Controls modal visibility
+      editing: null, // Holds the playlist being edited (null = creating new)
     };
   },
+  
+  // Computed properties (reactive data derived from store)
   computed: {
-    ...mapGetters('playlists', ['allPlaylists']),
+    // Map Vuex getters to component properties
+    ...mapGetters("playlists", ["allPlaylists"]),
+    
+    // Alias for better readability
     playlists() {
       return this.allPlaylists;
-    }
+    },
   },
+  
+  // Component methods
   methods: {
-    ...mapActions("playlists", ["fetchPlaylists", "createPlaylist", "updatePlaylist", "deletePlaylist"]),
+    // Map Vuex actions to component methods
+    ...mapActions("playlists", [
+      "fetchPlaylists",
+      "createPlaylist",
+      "updatePlaylist",
+      "deletePlaylist",
+    ]),
+    
+    /**
+     * Opens the modal for creating a new playlist
+     */
     openCreateModal() {
-      this.editing = null;
+      this.editing = null; // No playlist being edited
       this.showModal = true;
     },
+    
+    /**
+     * Opens the modal for editing an existing playlist
+     * @param {Object} playlist - The playlist object to edit
+     */
     openEditModal(playlist) {
-      this.editing = playlist;
+      this.editing = playlist; // Set the playlist being edited
       this.showModal = true;
     },
+    
+    /**
+     * Closes the modal and resets editing state
+     */
     closeModal() {
       this.showModal = false;
       this.editing = null;
     },
+    
+    /**
+     * Handles saving a playlist (create or update)
+     * @param {Object} playlist - The playlist data to save
+     */
     async handleSave(playlist) {
       try {
         if (this.editing) {
-          await this.updatePlaylist({ id: this.editing.id, playlistData: playlist });
+          // Update existing playlist
+          await this.updatePlaylist({
+            id: this.editing.id,
+            playlistData: playlist,
+          });
         } else {
+          // Create new playlist
           await this.createPlaylist(playlist);
         }
         this.closeModal();
       } catch (error) {
-        console.error('Error saving playlist:', error);
-        // You could add a toast notification here
+        console.error("Error saving playlist:", error);
+        // TODO: Add user-friendly error notification (toast)
       }
     },
+    
+    /**
+     * Handles deleting a playlist
+     * @param {number|string} playlistId - ID of the playlist to delete
+     */
     async handleDelete(playlistId) {
       try {
         await this.deletePlaylist(playlistId);
       } catch (error) {
-        console.error('Error deleting playlist:', error);
-        // You could add a toast notification here
+        console.error("Error deleting playlist:", error);
+        // TODO: Add user-friendly error notification (toast)
       }
     },
   },
+  
+  // Lifecycle hook: called when component is mounted
   async mounted() {
-    // Fetch playlists when component mounts
+    // Fetch playlists from the API when component loads
     await this.fetchPlaylists();
   },
 };
 </script>
 
 <style scoped>
+/* Main dashboard container */
 .dashboard {
   margin-top: 5vh;
   padding: 1rem;
   max-width: 100%;
 }
 
+/* Header section styling */
 .dashboard-header {
   display: flex;
   flex-direction: column;
@@ -117,6 +188,7 @@ export default {
   margin: 0;
 }
 
+/* Create playlist button styling */
 .add-btn {
   background: #333;
   color: white;
@@ -132,12 +204,14 @@ export default {
   background: #111;
 }
 
+/* Responsive grid for playlist cards */
 .playlist-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 1rem;
 }
 
+/* Tablet breakpoint */
 @media (min-width: 600px) {
   .dashboard-header {
     flex-direction: row;
@@ -150,12 +224,14 @@ export default {
   }
 }
 
+/* Desktop breakpoint */
 @media (min-width: 900px) {
   .playlist-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
+/* Legacy wrapper styling (commented out in template) */
 .wrapper-div {
   padding-top: 0;
 }

@@ -7,14 +7,14 @@
 
 <script>
 export default {
-  name: 'LoadingSpinner',
+  name: "LoadingSpinner",
   props: {
     text: {
       type: String,
-      default: 'Loading...'
-    }
-  }
-}
+      default: "Loading...",
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -43,7 +43,11 @@ export default {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

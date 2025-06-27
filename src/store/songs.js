@@ -1,4 +1,4 @@
-import { songAPI } from '../services/api';
+import { songAPI } from "../services/api";
 
 const state = {
   allSongs: [],
@@ -8,7 +8,9 @@ const state = {
 
 const getters = {
   getSongsByPlaylistId: (state) => (playlistId) => {
-    return state.allSongs.filter((song) => song.playlist === parseInt(playlistId));
+    return state.allSongs.filter(
+      (song) => song.playlist === parseInt(playlistId)
+    );
   },
   getAllSongs: (state) => state.allSongs,
 };
@@ -21,13 +23,13 @@ const mutations = {
     state.allSongs.push(song);
   },
   updateSong(state, updatedSong) {
-    const index = state.allSongs.findIndex(s => s.id === updatedSong.id);
+    const index = state.allSongs.findIndex((s) => s.id === updatedSong.id);
     if (index !== -1) {
       state.allSongs.splice(index, 1, updatedSong);
     }
   },
   removeSong(state, songId) {
-    state.allSongs = state.allSongs.filter(s => s.id !== songId);
+    state.allSongs = state.allSongs.filter((s) => s.id !== songId);
   },
   setLoading(state, loading) {
     state.loading = loading;
@@ -40,98 +42,98 @@ const mutations = {
 const actions = {
   // Fetch all songs
   async fetchSongs({ commit }) {
-    commit('setLoading', true);
-    commit('setError', null);
+    commit("setLoading", true);
+    commit("setError", null);
     try {
       const response = await songAPI.getSongs();
-      commit('setSongs', response.data);
+      commit("setSongs", response.data);
     } catch (error) {
-      commit('setError', error.message || 'Failed to fetch songs');
-      console.error('Error fetching songs:', error);
+      commit("setError", error.message || "Failed to fetch songs");
+      console.error("Error fetching songs:", error);
     } finally {
-      commit('setLoading', false);
+      commit("setLoading", false);
     }
   },
 
   // Fetch songs by playlist
   async fetchSongsByPlaylist({ commit }, playlistId) {
-    commit('setLoading', true);
-    commit('setError', null);
+    commit("setLoading", true);
+    commit("setError", null);
     try {
       const response = await songAPI.getSongsByPlaylist(playlistId);
-      commit('setSongs', response.data);
+      commit("setSongs", response.data);
     } catch (error) {
-      commit('setError', error.message || 'Failed to fetch songs');
-      console.error('Error fetching songs:', error);
+      commit("setError", error.message || "Failed to fetch songs");
+      console.error("Error fetching songs:", error);
     } finally {
-      commit('setLoading', false);
+      commit("setLoading", false);
     }
   },
 
   // Create new song
   async createSong({ commit }, songData) {
-    commit('setLoading', true);
-    commit('setError', null);
+    commit("setLoading", true);
+    commit("setError", null);
     try {
       const response = await songAPI.createSong(songData);
-      commit('addSong', response.data);
+      commit("addSong", response.data);
       return response.data;
     } catch (error) {
-      commit('setError', error.message || 'Failed to create song');
-      console.error('Error creating song:', error);
+      commit("setError", error.message || "Failed to create song");
+      console.error("Error creating song:", error);
       throw error;
     } finally {
-      commit('setLoading', false);
+      commit("setLoading", false);
     }
   },
 
   // Update song
   async updateSong({ commit }, { id, songData }) {
-    commit('setLoading', true);
-    commit('setError', null);
+    commit("setLoading", true);
+    commit("setError", null);
     try {
       const response = await songAPI.updateSong(id, songData);
-      commit('updateSong', response.data);
+      commit("updateSong", response.data);
       return response.data;
     } catch (error) {
-      commit('setError', error.message || 'Failed to update song');
-      console.error('Error updating song:', error);
+      commit("setError", error.message || "Failed to update song");
+      console.error("Error updating song:", error);
       throw error;
     } finally {
-      commit('setLoading', false);
+      commit("setLoading", false);
     }
   },
 
   // Delete song
   async deleteSong({ commit }, songId) {
-    commit('setLoading', true);
-    commit('setError', null);
+    commit("setLoading", true);
+    commit("setError", null);
     try {
       await songAPI.deleteSong(songId);
-      commit('removeSong', songId);
+      commit("removeSong", songId);
     } catch (error) {
-      commit('setError', error.message || 'Failed to delete song');
-      console.error('Error deleting song:', error);
+      commit("setError", error.message || "Failed to delete song");
+      console.error("Error deleting song:", error);
       throw error;
     } finally {
-      commit('setLoading', false);
+      commit("setLoading", false);
     }
   },
 
   // Reorder songs in playlist
   async reorderSongs({ commit }, { playlistId, songIds }) {
-    commit('setLoading', true);
-    commit('setError', null);
+    commit("setLoading", true);
+    commit("setError", null);
     try {
       const response = await songAPI.reorderSongs(playlistId, songIds);
-      commit('setSongs', response.data);
+      commit("setSongs", response.data);
       return response.data;
     } catch (error) {
-      commit('setError', error.message || 'Failed to reorder songs');
-      console.error('Error reordering songs:', error);
+      commit("setError", error.message || "Failed to reorder songs");
+      console.error("Error reordering songs:", error);
       throw error;
     } finally {
-      commit('setLoading', false);
+      commit("setLoading", false);
     }
   },
 };

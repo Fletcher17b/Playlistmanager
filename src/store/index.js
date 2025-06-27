@@ -1,6 +1,6 @@
 import { createStore } from "vuex";
 import playlists from "./playlists";
-import songs from './songs';
+import songs from "./songs";
 
 const THEME_KEY = "app-theme";
 
@@ -29,7 +29,6 @@ export default createStore({
       commit("setTheme", newTheme);
     },
     initializeTheme({ commit, state }) {
-      // Ensure body class matches stored theme on app start
       document.body.classList.toggle("dark-mode", state.theme === "dark");
     },
   },

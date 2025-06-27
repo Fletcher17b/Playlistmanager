@@ -1,9 +1,12 @@
 <template>
-    
   <div class="playlist-detail">
     <!-- Header: Playlist Thumbnail and Info -->
     <div class="playlist-header">
-      <img :src="playlist.thumbnail" alt="Playlist Thumbnail" class="playlist-thumb" />
+      <img
+        :src="playlist.thumbnail"
+        alt="Playlist Thumbnail"
+        class="playlist-thumb"
+      />
       <div class="playlist-info">
         <h1 class="playlist-title">{{ playlist.name }}</h1>
         <p class="playlist-description">{{ playlist.description }}</p>
@@ -19,15 +22,15 @@
           + Add Song
         </button>
       </div>
-      
+
       <div v-if="loading" class="loading">
         <LoadingSpinner />
       </div>
-      
+
       <div v-else-if="error" class="error">
         {{ error }}
       </div>
-      
+
       <div v-else-if="filteredSongs.length">
         <SongItem
           v-for="song in filteredSongs"
@@ -36,28 +39,26 @@
           @delete="handleDeleteSong"
         />
       </div>
-      
-      <div v-else class="no-songs">
-        No songs found.
-      </div>
+
+      <div v-else class="no-songs">No songs found.</div>
     </div>
 
     <!-- Add Song Modal -->
-    <AddSongModal 
-      v-if="showAddSongModal" 
+    <AddSongModal
+      v-if="showAddSongModal"
       :playlistId="playlistId"
-      @save="handleAddSong" 
+      @save="handleAddSong"
       @close="closeAddSongModal"
     />
   </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
-import SongItem from '../components/SongItem.vue';
-import SearchBar from '../components/SearchBar.vue';
-import LoadingSpinner from '../components/LoadingSpinner.vue';
-import AddSongModal from '../components/AddSongModal.vue';
+import { mapGetters, mapActions } from "vuex";
+import SongItem from "../components/SongItem.vue";
+import SearchBar from "../components/SearchBar.vue";
+import LoadingSpinner from "../components/LoadingSpinner.vue";
+import AddSongModal from "../components/AddSongModal.vue";
 
 export default {
   name: "PlaylistDetail",
@@ -74,26 +75,28 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('playlists', ['getPlaylistById']),
-    ...mapGetters('songs', ['getSongsByPlaylistId']),
-    
+    ...mapGetters("playlists", ["getPlaylistById"]),
+    ...mapGetters("songs", ["getSongsByPlaylistId"]),
+
     playlistId() {
       return this.$route.params.id;
     },
-    
+
     playlist() {
-      return this.getPlaylistById(this.playlistId) || {
-        name: "Playlist not found",
-        description: "",
-        thumbnail: "",
-        created_at: "",
-      };
+      return (
+        this.getPlaylistById(this.playlistId) || {
+          name: "Playlist not found",
+          description: "",
+          thumbnail: "",
+          created_at: "",
+        }
+      );
     },
-    
+
     songs() {
       return this.getSongsByPlaylistId(this.playlistId);
     },
-    
+
     filteredSongs() {
       if (!this.searchQuery.trim()) return this.songs;
       const query = this.searchQuery.toLowerCase();
@@ -103,29 +106,33 @@ export default {
           song.artist.toLowerCase().includes(query)
       );
     },
-    
+
     formattedDate() {
       if (!this.playlist.created_at) return "";
       return new Date(this.playlist.created_at).toLocaleDateString();
     },
-    
+
     loading() {
       return this.$store.state.songs.loading;
     },
-    
+
     error() {
       return this.$store.state.songs.error;
     },
   },
-  
+
   methods: {
-    ...mapActions('songs', ['fetchSongsByPlaylist', 'deleteSong', 'createSong']),
-    
+    ...mapActions("songs", [
+      "fetchSongsByPlaylist",
+      "deleteSong",
+      "createSong",
+    ]),
+
     async handleDeleteSong(songId) {
       try {
         await this.deleteSong(songId);
       } catch (error) {
-        console.error('Error deleting song:', error);
+        console.error("Error deleting song:", error);
       }
     },
 
@@ -142,11 +149,11 @@ export default {
         await this.createSong(songData);
         this.closeAddSongModal();
       } catch (error) {
-        console.error('Error adding song:', error);
+        console.error("Error adding song:", error);
       }
     },
   },
-  
+
   async mounted() {
     await this.fetchSongsByPlaylist(this.playlistId);
   },
@@ -267,7 +274,8 @@ export default {
   margin-top: 1rem;
 }
 
-.loading, .error {
+.loading,
+.error {
   text-align: center;
   margin-top: 2rem;
 }
@@ -281,7 +289,7 @@ export default {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .add-song-btn {
     order: -1;
   }

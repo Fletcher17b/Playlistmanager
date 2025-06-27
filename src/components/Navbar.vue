@@ -3,7 +3,12 @@
     <ul class="nav-list">
       <li class="nav-item" @click="goHome">Home</li>
       <li class="nav-item" @click="goDashboard">Dashboard</li>
-      <li class="nav-item toggle-theme" @click="toggleTheme" role="button" tabindex="0">
+      <li
+        class="nav-item toggle-theme"
+        @click="toggleTheme"
+        role="button"
+        tabindex="0"
+      >
         <span v-if="isDark">🌞 Light Mode</span>
         <span v-else>🌙 Dark Mode</span>
       </li>
@@ -12,10 +17,10 @@
 </template>
 
 <script>
-import {mapGetters,mapActions} from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
-  name: 'Navbar',
+  name: "Navbar",
   computed: {
     ...mapGetters(["isDarkTheme"]),
     isDark() {
@@ -25,13 +30,13 @@ export default {
   methods: {
     ...mapActions(["toggleTheme"]),
     goHome() {
-      this.$router.push('/');
+      this.$router.push("/");
     },
     goDashboard() {
-      this.$router.push('/dashboard');
+      this.$router.push("/dashboard");
     },
     goSettings() {
-      this.$router.push('/settings');
+      this.$router.push("/settings");
     },
   },
 };
@@ -48,7 +53,7 @@ export default {
   color: #fff;
   box-shadow: 0 -1px 6px rgba(0, 0, 0, 0.3);
   z-index: 1000;
-  margin-bottom:0;
+  margin-bottom: 0;
 }
 
 .nav-list {

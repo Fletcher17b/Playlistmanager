@@ -11,10 +11,7 @@
     >
       <template #item="{ element: song }">
         <div class="song-item-wrapper">
-          <SongItem
-            :song="song"
-            @delete="$emit('delete', song.id)"
-          />
+          <SongItem :song="song" @delete="$emit('delete', song.id)" />
         </div>
       </template>
     </draggable>
@@ -22,11 +19,11 @@
 </template>
 
 <script>
-import draggable from 'vuedraggable';
-import SongItem from './SongItem.vue';
+import draggable from "vuedraggable";
+import SongItem from "./SongItem.vue";
 
 export default {
-  name: 'DraggableSongList',
+  name: "DraggableSongList",
   components: {
     draggable,
     SongItem,
@@ -41,7 +38,7 @@ export default {
       required: true,
     },
   },
-  emits: ['delete', 'reorder'],
+  emits: ["delete", "reorder"],
   data() {
     return {
       localSongs: [...this.songs],
@@ -58,10 +55,10 @@ export default {
   methods: {
     onDragEnd(evt) {
       // Get the new order of song IDs
-      const songIds = this.localSongs.map(song => song.id);
-      
+      const songIds = this.localSongs.map((song) => song.id);
+
       // Emit the reorder event
-      this.$emit('reorder', {
+      this.$emit("reorder", {
         playlistId: this.playlistId,
         songIds: songIds,
         oldIndex: evt.oldIndex,
@@ -114,4 +111,4 @@ export default {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-</style> 
+</style>

@@ -17,7 +17,12 @@
         </label>
         <label>
           Duration (mm:ss):
-          <input v-model="form.duration" placeholder="3:45" required pattern="[0-9]+:[0-5][0-9]" />
+          <input
+            v-model="form.duration"
+            placeholder="3:45"
+            required
+            pattern="[0-9]+:[0-5][0-9]"
+          />
         </label>
         <label>
           Genre:
@@ -136,4 +141,4 @@ export default {
 .modal-actions button[type="button"]:hover {
   background: #545b62;
 }
-</style> 
+</style>

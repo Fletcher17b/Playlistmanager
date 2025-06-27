@@ -7,10 +7,10 @@
 </template>
 
 <script>
-import Navbar from '../components/Navbar.vue';
+import Navbar from "../components/Navbar.vue";
 
 export default {
-  name: 'HomePage',
+  name: "HomePage",
   components: {
     Navbar,
   },
@@ -18,9 +18,9 @@ export default {
   data() {
     return {
       // Empty data object (could add properties here later)
-    }
-  }
-}
+    };
+  },
+};
 </script>
 
 <style scoped>

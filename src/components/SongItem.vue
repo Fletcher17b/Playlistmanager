@@ -3,15 +3,26 @@
     <div class="song-header">
       <div class="drag-handle">⋮⋮</div>
       <div class="song-info">
-        <p class="title">{{ song.title  || 'Unknown Artist'}}</p>
-        <p class="meta">{{ song.artist || 'Unknown Artist'  }} — {{ song.album || 'Unknown Album' }}</p>
-        <p class="genre">{{ song.genre  || '-'}}</p>
+        <p class="title">{{ song.title || "Unknown Artist" }}</p>
+        <p class="meta">
+          {{ song.artist || "Unknown Artist" }} —
+          {{ song.album || "Unknown Album" }}
+        </p>
+        <p class="genre">{{ song.genre || "-" }}</p>
       </div>
-      <div class="duration">{{ song.duration || '0:00' }}</div>
+      <div class="duration">{{ song.duration || "0:00" }}</div>
     </div>
     <div class="song-actions">
-      <button @click="$emit('edit', song)" class="edit-btn" style="display: none;">✏️ Edit</button>
-      <button @click="$emit('delete', song.id)" class="delete-btn">🗑️ Remove</button>
+      <button
+        @click="$emit('edit', song)"
+        class="edit-btn"
+        style="display: none"
+      >
+        ✏️ Edit
+      </button>
+      <button @click="$emit('delete', song.id)" class="delete-btn">
+        🗑️ Remove
+      </button>
     </div>
   </div>
 </template>
